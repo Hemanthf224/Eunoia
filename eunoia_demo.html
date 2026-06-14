@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eunoia – Demo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+  :root {
+    --bg: #0C0A14;
+    --surface: #13101F;
+    --card: #1A1630;
+    --border: #2D2450;
+    --purple: #7B4FCC;
+    --purple-light: #A67EE8;
+    --gold: #F5A623;
+    --gold-soft: #FFD080;
+    --white: #F0EBF8;
+    --muted: #8B7FA8;
+    --pink: #C44FBF;
+    --green: #4FCCA0;
+    --red: #E05A6A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,79,204,0.18) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(123,79,204,0.18);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--purple-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--purple-light); display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    background: linear-gradient(135deg, var(--gold) 0%, var(--purple-light) 60%, var(--pink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .hero p {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+  .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(123,79,204,0.4); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-ghost:hover { border-color: var(--purple-light); color: var(--white); }
+
+  /* scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .scroll-arrow {
+    width: 20px; height: 20px;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg);
+    animation: bounce 1.5s infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(6px)} }
+
+  /* ── SECTION WRAPPER ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--white);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .section-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 540px;
+    margin-bottom: 3rem;
+  }
+
+  /* divider */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  .step-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: default;
+  }
+  .step-card:hover { border-color: var(--purple); transform: translateY(-4px); }
+  .step-num {
+    font-size: 11px;
+    color: var(--purple-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  .step-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .step-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--white); }
+  .step-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── PHONE DEMO ── */
+  .demo-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  @media(max-width:768px){ .demo-wrapper{ grid-template-columns:1fr; } }
+
+  .phone-frame {
+    width: 280px;
+    height: 580px;
+    background: var(--surface);
+    border-radius: 40px;
+    border: 2px solid var(--border);
+    box-shadow: 0 0 60px rgba(123,79,204,0.2), inset 0 0 0 6px var(--bg);
+    overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+  }
+  .phone-notch {
+    width: 100px; height: 24px;
+    background: var(--bg);
+    border-radius: 0 0 18px 18px;
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+  .phone-screen {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Phone screens */
+  .screen { display: none; width: 100%; height: 100%; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* Onboarding screen */
+  .s-onboard {
+    background: linear-gradient(160deg, #1A0E30 0%, #0C0A14 100%);
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    gap: 1rem;
+  }
+  .s-onboard .app-logo { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .s-onboard h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; background: linear-gradient(135deg,var(--gold),var(--purple-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .s-onboard p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+  .s-onboard .mini-btn { background: linear-gradient(135deg,var(--purple),var(--pink)); color:#fff; border:none; border-radius:8px; padding:10px 24px; font-size:13px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; width:100%; }
+
+  /* Mood screen */
+  .s-mood {
+    background: var(--surface);
+    padding: 1.5rem 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .mood-header { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .mood-title { font-size: 1rem; font-weight: 600; color: var(--white); }
+  .mood-sub { font-size: 0.7rem; color: var(--muted); }
+  .mood-emojis { display: flex; justify-content: space-around; padding: 0.75rem 0; }
+  .mood-emojis span {
+    font-size: 1.6rem; cursor: pointer; border-radius: 50%;
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .mood-emojis span:hover, .mood-emojis span.sel { background: rgba(123,79,204,0.25); transform: scale(1.2); }
+  .mood-chart { flex: 1; display: flex; align-items: flex-end; gap: 6px; padding: 0.5rem 0; }
+  .bar { flex: 1; border-radius: 4px 4px 0 0; transition: height 0.6s ease; }
+  .bar.b1 { height: 40%; background: linear-gradient(to top, var(--purple), var(--purple-light)); }
+  .bar.b2 { height: 65%; background: linear-gradient(to top, var(--purple), var(--purple-light)); }
+  .bar.b3 { height: 30%; background: linear-gradient(to top, var(--purple), var(--purple-light)); }
+  .bar.b4 { height: 80%; background: linear-gradient(to top, var(--gold), var(--gold-soft)); }
+  .bar.b5 { height: 55%; background: linear-gradient(to top, var(--purple), var(--purple-light)); }
+  .bar.b6 { height: 70%; background: linear-gradient(to top, var(--green), #7FFFD4); }
+  .bar.b7 { height: 90%; background: linear-gradient(to top, var(--green), #7FFFD4)); }
+  .mood-days { display: flex; justify-content: space-around; font-size: 0.55rem; color: var(--muted); padding-bottom: 0.5rem; }
+
+  /* Chat screen */
+  .s-chat {
+    background: var(--surface);
+    flex-direction: column;
+  }
+  .chat-header {
+    background: var(--card);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    border-bottom: 1px solid var(--border);
+    margin-top: 1.5rem;
+  }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,var(--purple),var(--pink)); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+  .chat-name { font-size: 0.8rem; font-weight: 600; }
+  .chat-status { font-size: 0.6rem; color: var(--green); }
+  .chat-msgs { flex: 1; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.6rem; overflow: hidden; }
+  .msg { max-width: 85%; font-size: 0.7rem; line-height: 1.5; padding: 0.6rem 0.8rem; border-radius: 12px; }
+  .msg.ai { background: var(--card); color: var(--white); border-bottom-left-radius: 4px; align-self: flex-start; border: 1px solid var(--border); }
+  .msg.user { background: linear-gradient(135deg,var(--purple),var(--pink)); color:#fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+  .chat-input { display:flex; gap:6px; padding:0.75rem; border-top:1px solid var(--border); }
+  .chat-input input { flex:1; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:6px 10px; color:var(--white); font-size:0.65rem; font-family:'DM Sans',sans-serif; outline:none; }
+  .chat-input button { background:var(--purple); border:none; border-radius:8px; padding:6px 10px; color:#fff; cursor:pointer; font-size:0.75rem; }
+
+  /* Peer screen */
+  .s-peer {
+    background: var(--surface);
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .peer-title { font-size: 0.8rem; font-weight: 600; color: var(--white); }
+  .peer-sub { font-size: 0.65rem; color: var(--muted); }
+  .peer-circle {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .peer-circle:hover { border-color: var(--purple-light); }
+  .circle-icon { font-size: 1.4rem; }
+  .circle-name { font-size: 0.75rem; font-weight: 600; color: var(--white); }
+  .circle-count { font-size: 0.6rem; color: var(--muted); }
+  .circle-badge { margin-left:auto; background:rgba(123,79,204,0.25); color:var(--purple-light); border-radius:999px; padding:2px 8px; font-size:0.55rem; }
+
+  /* nav tabs */
+  .phone-nav {
+    display: flex;
+    border-top: 1px solid var(--border);
+    background: var(--card);
+  }
+  .nav-tab {
+    flex: 1;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    font-size: 8px;
+    color: var(--muted);
+    transition: color 0.2s;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-tab.active { color: var(--purple-light); }
+  .nav-tab .icon { font-size: 16px; }
+
+  /* Demo controls */
+  .demo-controls { display: flex; flex-direction: column; gap: 1rem; }
+  .demo-controls h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+  .demo-controls p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+  .control-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    text-align: left;
+    width: 100%;
+  }
+  .control-btn:hover, .control-btn.active { border-color: var(--purple); background: rgba(123,79,204,0.1); }
+  .control-btn .cb-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .cb-title { font-size: 0.95rem; font-weight: 600; }
+  .cb-desc { font-size: 0.8rem; color: var(--muted); }
+  .cb-arrow { margin-left: auto; color: var(--purple-light); font-size: 1.2rem; }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .feat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .feat-card:hover { border-color: var(--purple-light); transform: translateY(-4px); }
+  .feat-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+  .feat-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .feat-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+  .feat-tag {
+    display: inline-block;
+    margin-top: 1rem;
+    background: rgba(123,79,204,0.15);
+    color: var(--purple-light);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .stat-card:hover { border-color: var(--gold); }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-label { font-size: 0.85rem; color: var(--muted); line-height: 1.4; }
+
+  /* ── RECORDING SECTION ── */
+  .record-section {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 5rem 2rem;
+  }
+  .record-inner { max-width: 1100px; margin: 0 auto; }
+  .record-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media(max-width:768px){ .record-box{ grid-template-columns:1fr; } }
+
+  .rec-left h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 0.75rem; }
+  .rec-left p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.5rem; }
+
+  #rec-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    min-height: 28px;
+  }
+  .rec-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+  }
+  .rec-dot.recording { background: var(--red); animation: pulse 1s infinite; }
+  .rec-dot.done { background: var(--green); animation: none; }
+
+  .rec-btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .rec-btn {
+    padding: 11px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .rec-btn:hover { transform: translateY(-1px); }
+  .rec-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .rec-start { background: linear-gradient(135deg, var(--red), #ff6b6b); color: #fff; }
+  .rec-stop { background: var(--card); color: var(--white); border: 1px solid var(--border); }
+  .rec-download { background: linear-gradient(135deg, var(--green), #2ECC71); color: #000; font-weight: 700; }
+
+  .rec-right h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: var(--white); }
+  .rec-timeline { display: flex; flex-direction: column; gap: 0.75rem; }
+  .rt-item { display: flex; align-items: flex-start; gap: 0.75rem; }
+  .rt-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); flex-shrink: 0; margin-top: 5px; }
+  .rt-text { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+  .rt-text strong { color: var(--white); }
+
+  /* video preview */
+  #video-preview-wrap { margin-top: 1.5rem; display: none; }
+  #video-preview-wrap video { width: 100%; border-radius: 12px; border: 1px solid var(--border); }
+  #video-preview-wrap p { font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+  footer strong { color: var(--white); }
+
+  /* timer display */
+  #rec-timer { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="badge"><span></span> BuildX '26 · Week 0 Submission · Team Ahjin</div>
+  <h1>Eunoia</h1>
+  <p>AI-powered mental wellness for India's college students. Anonymous. Available 24/7. Built for your campus.</p>
+  <div class="cta-row">
+    <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">See Live Demo</button>
+    <button class="btn-ghost" onclick="document.getElementById('record').scrollIntoView({behavior:'smooth'})">Record Demo Video</button>
+  </div>
+  <div class="scroll-hint"><div class="scroll-arrow"></div>Scroll to explore</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── STATS ── -->
+<section class="section">
+  <div class="section-label">The Problem</div>
+  <div class="section-title">A silent crisis on every campus</div>
+  <div class="section-sub">1 in 4 Indian college students faces anxiety or depression — yet almost none ever seek help.</div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num">76%</div><div class="stat-label">of students say stress is their #1 concern (AICTE 2025)</div></div>
+    <div class="stat-card"><div class="stat-num">10%</div><div class="stat-label">actually seek help due to stigma & lack of access</div></div>
+    <div class="stat-card"><div class="stat-num">1:500</div><div class="stat-label">student-to-counselor ratio at Indian colleges</div></div>
+    <div class="stat-card"><div class="stat-num">3 Wks</div><div class="stat-label">average wait time at campus counseling centers</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section">
+  <div class="section-label">How It Works</div>
+  <div class="section-title">Four steps to feeling better</div>
+  <div class="section-sub">Eunoia meets you where you are — no appointments, no stigma, no cost barrier.</div>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">Step 01</div>
+      <div class="step-icon">🔐</div>
+      <h3>Anonymous Sign-in</h3>
+      <p>No name, no email. Just a private username. Your identity stays yours.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Step 02</div>
+      <div class="step-icon">🌡️</div>
+      <h3>Daily Mood Check-in</h3>
+      <p>Pick how you feel in 5 seconds. Eunoia tracks patterns and spots warning signs early.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Step 03</div>
+      <div class="step-icon">🤖</div>
+      <h3>AI Companion Chat</h3>
+      <p>Talk to an empathetic AI trained on CBT & DBT. Available at 2am before an exam — always.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Step 04</div>
+      <div class="step-icon">🌐</div>
+      <h3>Join Peer Circles</h3>
+      <p>Anonymous group support sorted by topic — exam stress, loneliness, family pressure, and more.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── PHONE DEMO ── -->
+<section class="section" id="demo">
+  <div class="section-label">Interactive Demo</div>
+  <div class="section-title">Experience Eunoia</div>
+  <div class="section-sub">Click the screens below to walk through the app flow.</div>
+  <div class="demo-wrapper">
+
+    <!-- Phone -->
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+
+        <!-- Onboarding -->
+        <div class="screen s-onboard active" id="s-onboard">
+          <div class="app-logo">🧠</div>
+          <h2>Eunoia</h2>
+          <p>Beautiful thinking.<br>Your mind deserves care.</p>
+          <button class="mini-btn" onclick="showScreen('s-mood')">Get Started →</button>
+        </div>
+
+        <!-- Mood -->
+        <div class="screen s-mood" id="s-mood">
+          <div class="mood-header">Daily Check-in</div>
+          <div class="mood-title">How are you feeling today?</div>
+          <div class="mood-sub">Be honest — this is just for you.</div>
+          <div class="mood-emojis">
+            <span title="Terrible" onclick="selectMood(this)">😔</span>
+            <span title="Low" onclick="selectMood(this)">😕</span>
+            <span title="Okay" onclick="selectMood(this)">😐</span>
+            <span title="Good" onclick="selectMood(this)">🙂</span>
+            <span title="Great" onclick="selectMood(this)">😊</span>
+          </div>
+          <div style="font-size:0.65rem;color:var(--muted);padding:0 0.5rem;">This week's mood</div>
+          <div class="mood-chart">
+            <div class="bar b1"></div><div class="bar b2"></div><div class="bar b3"></div>
+            <div class="bar b4"></div><div class="bar b5"></div><div class="bar b6"></div>
+            <div class="bar b7"></div>
+          </div>
+          <div class="mood-days"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          <div class="phone-nav">
+            <button class="nav-tab" onclick="showScreen('s-onboard')"><span class="icon">🏠</span>Home</button>
+            <button class="nav-tab active"><span class="icon">📊</span>Mood</button>
+            <button class="nav-tab" onclick="showScreen('s-chat')"><span class="icon">🤖</span>AI Chat</button>
+            <button class="nav-tab" onclick="showScreen('s-peer')"><span class="icon">🌐</span>Circles</button>
+          </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="screen s-chat" id="s-chat">
+          <div class="chat-header">
+            <div class="avatar">✨</div>
+            <div>
+              <div class="chat-name">Eunoia AI</div>
+              <div class="chat-status">● Online · Always here</div>
+            </div>
+          </div>
+          <div class="chat-msgs" id="chat-msgs">
+            <div class="msg ai">Hey 👋 I'm here for you. How are you feeling right now?</div>
+            <div class="msg user">I have exams tomorrow and I can't stop panicking</div>
+            <div class="msg ai">I hear you — that pre-exam anxiety is so real. Let's try a quick breathing exercise together. Ready? 🌬️</div>
+          </div>
+          <div class="chat-input">
+            <input type="text" id="chat-in" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+            <button onclick="sendMsg()">➤</button>
+          </div>
+          <div class="phone-nav">
+            <button class="nav-tab" onclick="showScreen('s-onboard')"><span class="icon">🏠</span>Home</button>
+            <button class="nav-tab" onclick="showScreen('s-mood')"><span class="icon">📊</span>Mood</button>
+            <button class="nav-tab active"><span class="icon">🤖</span>AI Chat</button>
+            <button class="nav-tab" onclick="showScreen('s-peer')"><span class="icon">🌐</span>Circles</button>
+          </div>
+        </div>
+
+        <!-- Peer -->
+        <div class="screen s-peer" id="s-peer">
+          <div class="peer-title">Peer Circles</div>
+          <div class="peer-sub">Anonymous group support — find your people</div>
+          <div class="peer-circle"><div class="circle-icon">📚</div><div><div class="circle-name">Exam Stress</div><div class="circle-count">1,240 members</div></div><div class="circle-badge">Active</div></div>
+          <div class="peer-circle"><div class="circle-icon">🏠</div><div><div class="circle-name">Homesickness</div><div class="circle-count">847 members</div></div><div class="circle-badge">Active</div></div>
+          <div class="peer-circle"><div class="circle-icon">💼</div><div><div class="circle-name">Placement Anxiety</div><div class="circle-count">2,103 members</div></div><div class="circle-badge">🔥 Hot</div></div>
+          <div class="peer-circle"><div class="circle-icon">😴</div><div><div class="circle-name">Sleep & Burnout</div><div class="circle-count">654 members</div></div><div class="circle-badge">Active</div></div>
+          <div class="phone-nav">
+            <button class="nav-tab" onclick="showScreen('s-onboard')"><span class="icon">🏠</span>Home</button>
+            <button class="nav-tab" onclick="showScreen('s-mood')"><span class="icon">📊</span>Mood</button>
+            <button class="nav-tab" onclick="showScreen('s-chat')"><span class="icon">🤖</span>AI Chat</button>
+            <button class="nav-tab active"><span class="icon">🌐</span>Circles</button>
+          </div>
+        </div>
+
+      </div><!-- /phone-screen -->
+    </div><!-- /phone-frame -->
+
+    <!-- Controls -->
+    <div class="demo-controls">
+      <h3>Walk through the app</h3>
+      <p>Click any screen below to navigate the Eunoia prototype.</p>
+      <button class="control-btn active" id="cb-onboard" onclick="showScreen('s-onboard');setActive('cb-onboard')">
+        <span class="cb-icon">🔐</span>
+        <div><div class="cb-title">Onboarding</div><div class="cb-desc">Anonymous sign-in, zero friction</div></div>
+        <span class="cb-arrow">→</span>
+      </button>
+      <button class="control-btn" id="cb-mood" onclick="showScreen('s-mood');setActive('cb-mood')">
+        <span class="cb-icon">📊</span>
+        <div><div class="cb-title">Mood Tracker</div><div class="cb-desc">Daily check-in & weekly graph</div></div>
+        <span class="cb-arrow">→</span>
+      </button>
+      <button class="control-btn" id="cb-chat" onclick="showScreen('s-chat');setActive('cb-chat')">
+        <span class="cb-icon">🤖</span>
+        <div><div class="cb-title">AI Companion Chat</div><div class="cb-desc">CBT-guided empathetic conversation</div></div>
+        <span class="cb-arrow">→</span>
+      </button>
+      <button class="control-btn" id="cb-peer" onclick="showScreen('s-peer');setActive('cb-peer')">
+        <span class="cb-icon">🌐</span>
+        <div><div class="cb-title">Peer Circles</div><div class="cb-desc">Anonymous group support by topic</div></div>
+        <span class="cb-arrow">→</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── FEATURES ── -->
+<section class="section">
+  <div class="section-label">Core Features</div>
+  <div class="section-title">Everything your mind needs</div>
+  <div class="section-sub">Built around three pillars: privacy, empathy, and campus integration.</div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">🤖</div>
+      <h3>AI Companion</h3>
+      <p>Powered by Gemini API + LangChain, guided by CBT & DBT frameworks. Responds with empathy, not scripts.</p>
+      <div class="feat-tag">Gemini API</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🌐</div>
+      <h3>Peer Circles</h3>
+      <p>Moderated anonymous groups by topic. Real peer support without the fear of judgment or exposure.</p>
+      <div class="feat-tag">Socket.io</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <h3>Mood Tracker</h3>
+      <p>Daily emotional check-ins with pattern detection. Smart escalation alerts notify campus counselors when critical.</p>
+      <div class="feat-tag">HuggingFace NLP</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔐</div>
+      <h3>Zero Identity</h3>
+      <p>Firebase anonymous auth. No name, no email, no phone number. Your data stays encrypted and private.</p>
+      <div class="feat-tag">Firebase Auth</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🏫</div>
+      <h3>Campus Integration</h3>
+      <p>Counselor dashboard with anonymized trends and escalation alerts. Colleges get insights, students stay anonymous.</p>
+      <div class="feat-tag">Admin Dashboard</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🇮🇳</div>
+      <h3>India-First Context</h3>
+      <p>Trained on Indian college stressors — JEE pressure, placement season, hostel loneliness, regional languages.</p>
+      <div class="feat-tag">Multilingual</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── RECORD SECTION ── -->
+<section class="record-section" id="record">
+  <div class="record-inner">
+    <div class="section-label" style="margin-bottom:0.75rem">Demo Video</div>
+    <div class="section-title" style="margin-bottom:2rem">Record your walkthrough</div>
+    <div class="record-box">
+      <div class="rec-left">
+        <h3>Screen Recorder</h3>
+        <p>Hit <strong>Start Recording</strong>, walk through the demo above, then <strong>Stop</strong> and download your video to submit with your BuildX'26 entry.</p>
+        <div id="rec-status">
+          <div class="rec-dot" id="rec-dot"></div>
+          <span id="rec-status-text">Ready to record</span>
+          <span id="rec-timer" style="display:none"></span>
+        </div>
+        <div class="rec-btn-row">
+          <button class="rec-btn rec-start" id="btn-start" onclick="startRec()">⏺ Start Recording</button>
+          <button class="rec-btn rec-stop" id="btn-stop" onclick="stopRec()" disabled>⏹ Stop</button>
+          <button class="rec-btn rec-download" id="btn-dl" onclick="downloadRec()" disabled>⬇ Download</button>
+        </div>
+        <div id="video-preview-wrap">
+          <video id="video-preview" controls></video>
+          <p>✅ Recording complete — download and attach to your submission!</p>
+        </div>
+      </div>
+      <div class="rec-right">
+        <h4>📋 Recording Script</h4>
+        <div class="rec-timeline">
+          <div class="rt-item"><div class="rt-dot"></div><div class="rt-text"><strong>0:00 – 0:10</strong> — Introduce Eunoia: "This is Eunoia, an AI mental wellness platform for college students."</div></div>
+          <div class="rt-item"><div class="rt-dot"></div><div class="rt-text"><strong>0:10 – 0:20</strong> — Click <em>Onboarding</em>: "Students sign in anonymously — no name, no email required."</div></div>
+          <div class="rt-item"><div class="rt-dot"></div><div class="rt-text"><strong>0:20 – 0:35</strong> — Click <em>Mood Tracker</em>: "A daily check-in takes 5 seconds. Eunoia tracks mood patterns over time."</div></div>
+          <div class="rt-item"><div class="rt-dot"></div><div class="rt-text"><strong>0:35 – 0:55</strong> — Click <em>AI Chat</em>: "Our AI companion uses CBT techniques and is available 24/7, even at 2am before exams."</div></div>
+          <div class="rt-item"><div class="rt-dot"></div><div class="rt-text"><strong>0:55 – 1:10</strong> — Click <em>Peer Circles</em>: "Students join anonymous groups by topic — exam stress, burnout, homesickness."</div></div>
+          <div class="rt-item"><div class="rt-dot"></div><div class="rt-text"><strong>1:10 – 1:20</strong> — Close: "Eunoia — beautiful thinking for every campus. Team Ahjin, BuildX'26."</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--white);margin-bottom:0.5rem">Eunoia 🧠</p>
+  <p>Built by <strong>Team Ahjin</strong> · M Hemanth Reddy (Leader) · <strong>BuildX '26</strong> · IIT Kharagpur × Resourcio</p>
+  <p style="margin-top:0.5rem">HealthTech · EdTech · AI for Social Good</p>
+</footer>
+
+<script>
+// ── Screen switching ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function setActive(id) {
+  document.querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function selectMood(el) {
+  document.querySelectorAll('.mood-emojis span').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+// ── AI Chat replies ──
+const replies = [
+  "That sounds really tough. You're not alone in feeling this way 💙",
+  "Try this: breathe in for 4 counts, hold for 4, out for 4. Let's do it together.",
+  "You've made it through hard times before. What helped you then?",
+  "It's okay to feel overwhelmed. Would you like to join a Peer Circle for exam stress?",
+  "Remember — one step at a time. What's the next small thing you can do right now?",
+];
+let ri = 0;
+function sendMsg() {
+  const inp = document.getElementById('chat-in');
+  const val = inp.value.trim();
+  if (!val) return;
+  const msgs = document.getElementById('chat-msgs');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg user';
+  userMsg.textContent = val;
+  msgs.appendChild(userMsg);
+  inp.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => {
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'msg ai';
+    aiMsg.textContent = replies[ri % replies.length];
+    ri++;
+    msgs.appendChild(aiMsg);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 900);
+}
+
+// ── Screen Recorder ──
+let mediaRecorder, chunks = [], recBlob, timerInterval, secs = 0;
+
+function fmt(s) { return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+
+async function startRec() {
+  try {
+    const stream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: 'always' }, audio: true });
+    chunks = []; secs = 0;
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      recBlob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(recBlob);
+      const vid = document.getElementById('video-preview');
+      vid.src = url;
+      document.getElementById('video-preview-wrap').style.display = 'block';
+      document.getElementById('btn-dl').disabled = false;
+      setStatus('done', 'Recording saved — ' + fmt(secs));
+      clearInterval(timerInterval);
+      document.getElementById('rec-timer').style.display = 'none';
+      stream.getTracks().forEach(t => t.stop());
+    };
+    mediaRecorder.start();
+    document.getElementById('btn-start').disabled = true;
+    document.getElementById('btn-stop').disabled = false;
+    document.getElementById('btn-dl').disabled = true;
+    document.getElementById('video-preview-wrap').style.display = 'none';
+    document.getElementById('rec-timer').style.display = 'inline';
+    setStatus('recording', 'Recording... ');
+    timerInterval = setInterval(() => {
+      secs++;
+      document.getElementById('rec-timer').textContent = fmt(secs);
+    }, 1000);
+  } catch(e) {
+    setStatus('', 'Permission denied or cancelled.');
+  }
+}
+
+function stopRec() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-stop').disabled = true;
+  clearInterval(timerInterval);
+}
+
+function downloadRec() {
+  if (!recBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(recBlob);
+  a.download = 'Eunoia_Demo_TeamAhjin_BuildX26.webm';
+  a.click();
+}
+
+function setStatus(state, text) {
+  const dot = document.getElementById('rec-dot');
+  dot.className = 'rec-dot' + (state ? ' ' + state : '');
+  document.getElementById('rec-status-text').textContent = text;
+}
+</script>
+</body>
+</html>
